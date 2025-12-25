@@ -1,0 +1,216 @@
+URLAPI – API Documentation (Plain Text)
+
+Base URL: http://localhost:3000/api/user
+
+1. Register User
+
+POST /register
+Registers a new user with username, email, and password. Auto-generates an API key.
+
+Request Body:
+
+{
+  "username": "john_doe",
+  "email": "john@example.com",
+  "password": "mysecretpassword"
+}
+
+
+Response:
+
+{
+  "message": "User registered successfully"
+}
+
+
+Errors:
+
+400: User already exists
+
+500: Internal server error
+
+2. Login User
+
+POST /login
+Authenticates a user and returns JWT token.
+
+Request Body:
+
+{
+  "email": "john@example.com",
+  "password": "mysecretpassword"
+}
+
+
+Response:
+
+{
+  "message": "Login successful",
+  "token": "<JWT_TOKEN>"
+}
+
+
+Errors:
+
+400: User not found / Invalid credentials
+
+500: Internal server error
+
+3. Logout
+
+POST /logout
+Logs out the user (frontend just discards JWT).
+
+Response:
+
+{
+  "message": "Logged out successfully"
+}
+
+4. Get Profile
+
+GET /profile
+Fetches user profile info. Auth required (JWT or API key).
+
+Response:
+
+{
+  "username": "john_doe",
+  "email": "john@example.com",
+  "apikey": "qup08fu19n",
+  "requestMade": 12,
+  "requestLimit": 100
+}
+
+5. Update Profile
+
+PUT /updateprofile
+Update user info. JWT auth required.
+
+Request Headers:
+
+Authorization: Bearer <JWT_TOKEN>
+
+
+Request Body:
+
+{
+  "username": "John Updated",
+  "email": "john_updated@example.com"
+}
+
+
+Response:
+
+{
+  "message": "Profile updated",
+  "updatedUser": {
+    "_id": "652cdd4...",
+    "username": "John Updated",
+    "email": "john_updated@example.com",
+    "apiKey": "qup08fu19n"
+  }
+}
+
+6. Regenerate API Key
+
+POST /regenerate-apikey
+Generates a new API key. Auth required.
+
+Response:
+
+{
+  "message": "API key regenerated successfully",
+  "apiKey": "newapikey123"
+}
+
+7. Delete Account
+
+DELETE /delete
+Deletes the user account. Auth required.
+
+Response:
+
+{
+  "message": "Account deleted successfully"
+}
+
+8. Preview URL Metadata
+
+GET /previewurl
+Fetches URL title, description, and image. Auth required (JWT or API key). Rate limited.
+
+Query Parameters:
+
+url=<URL_TO_PREVIEW>
+api_key=<API_KEY> (optional if JWT)
+
+
+Response:
+
+{
+  "title": "My Link Preview",
+  "description": "A sample preview site",
+  "image": "https://my.linkpreview.net/preview.png",
+  "url": "https://my.linkpreview.net/"
+}
+
+
+Errors:
+
+400: Missing URL
+
+429: Request limit exceeded
+
+500: Could not fetch URL data
+
+9. Request History
+
+GET /history
+Fetch previously previewed URLs. Auth required.
+
+Response:
+
+[
+  {
+    "_id": "abc123",
+    "url": "https://openai.com",
+    "title": "OpenAI",
+    "description": "AI research lab",
+    "image": "https://openai.com/logo.png",
+    "fetchedAt": "2025-10-06T15:30:22.451Z"
+  }
+]
+
+10. User Stats
+
+GET /stats
+Fetch total requests, remaining quota, last request. Auth required.
+
+Response:
+
+{
+  "username": "john_doe",
+  "totalRequests": 35,
+  "remainingRequests": 65,
+  "lastRequestAt": "2025-10-06T17:42:15.225Z"
+}
+
+11. Health Check
+
+GET /health
+Check API status. No auth required.
+
+Response:
+
+{
+  "status": "ok",
+  "uptime": 128.45
+}
+
+⚠️ Common Errors
+400 - Bad Request (Missing params)
+401 - Unauthorized (Invalid or missing token)
+404 - Not Found (User not found)
+429 - Too Many Requests (Request limit exceeded)
+500 - Internal Server Error
